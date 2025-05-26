@@ -559,6 +559,7 @@ document.addEventListener('DOMContentLoaded', () => {
           })),
           yAxisIndex: 0,
           showMarker: true,
+          // color: '#000000',
         };
 
         const fluidSeries = {
@@ -587,6 +588,19 @@ document.addEventListener('DOMContentLoaded', () => {
           showMarker: true,
         }
 
+        // Add actualData as a series with bold line
+        const actualDataSeries = {
+          name: 'Actual Data',
+          type: 'line',
+          data: actualData,
+          yAxisIndex: 0,
+          showMarker: true,
+          stroke: {
+            color: '#000000',
+            width: 4 // Make the line bold
+          }
+        };
+
         // update current data series, set job code and fluid series hidden
         currentDataSeries = currentDataSeries.map((it) => {
           if(it.name === "Job Code"){
@@ -602,6 +616,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // remove prediction series
         currentDataSeries = currentDataSeries.filter((it) => !it.isPrediction);
         const newSeries = [
+          actualDataSeries,
+          // productionSeries,
           { name: 'Exponential Decline', type: 'line', data: exponentialData,  yaxis: 0, hidden: false},
           { name: 'Harmonic Decline', type: 'line', data: harmonicData, yaxis: 0, hidden:true},
           { name: 'Hyperbolic Decline', type: 'line', data: hyperbolicData, yaxis: 0, hidden:true }

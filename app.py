@@ -540,7 +540,6 @@ def automatic_dca_analysis():
         selected_data = data.get('selected_data')
         custom_filter = data.get('custom_filter')
 
-
         if selected_data:
             well_data_all = pd.DataFrame(selected_data)
             well_data_all['Date'] = pd.to_datetime(well_data_all['Date'])
@@ -629,6 +628,20 @@ def automatic_dca_analysis():
             for date, value, fluid in zip(well_data_all['TEST_DATE'], well_data_all['TSTOIL'], well_data_all['TSTFLUID'])
         ]
 
+        # Inisialisasi daftar yang disaring dengan titik data pertama
+        filtered_data = []
+        if historical_data:
+            filtered_data.append(historical_data[0])  # Selalu sertakan titik data pertama
+
+            # Iterasi melalui titik-titik data yang tersisa
+            for i in range(1, len(historical_data)):
+                prev = historical_data[i - 1]
+                current = historical_data[i]
+
+                # Periksa apakah ada perubahan pada 'value' atau 'fluid'
+                if current['value'] != prev['value'] or current['fluid'] != prev['fluid']:
+                    filtered_data.append(current)
+
         start_date = well_data_all['TEST_DATE'].min().strftime('%Y-%m-%d')
         end_date = well_data_all['TEST_DATE'].max().strftime('%Y-%m-%d')
 
@@ -666,7 +679,7 @@ def automatic_dca_analysis():
                             "Harmonic": round(harm_params[1] * DAYS_PER_YEAR * PERCENTAGE_FACTOR, 2),
                             "Hyperbolic": round(hyper_params[1] * DAYS_PER_YEAR * PERCENTAGE_FACTOR, 2)
                         },
-            "ActualData": historical_data,
+            "ActualData": filtered_data,
             "StartDate": start_date,
             "EndDate": end_date
         })
